@@ -1,0 +1,43 @@
+---
+output: html_document
+params:
+  symbol: GOOG
+---
+
+## `r params$symbol`
+
+```{r echo=FALSE, message=FALSE}
+# set up
+
+library(xts)
+library(quantmod)
+
+prices <- getSymbols(params$symbol, auto.assign = FALSE)
+move <- Cl(last(prices)) - Op(last(prices))
+```
+
+`r params$symbol` will **`r ifelse(move > 0, "increase", "decrease")`** in price during the next trading period. 
+
+This forecast was predicted with the *recency algorithm*, a simple---probably useless---method for determining stock prices. The recency algorithm predicts that the next price movement will be in the same direction as the most recent price movement.
+
+
+## Price History
+
+The chart below is made with the `quantmod` R package, a widely used package for collecting and visualizing financial data in R. You can learn more about `quantmod` at the website [www.quantmod.com](rstudio.github.io/DT/).  
+
+***
+
+```{r echo=FALSE}
+chartSeries(prices, theme = chartTheme("white", bg.col = "white"))
+```
+
+## Raw Data
+
+The table below displays the daily price data for the stock. In the next section, we will learn how to make a concise, interactive table with the `DT` package, a new package for making searchable data tables. You can learn more about the `DT` package at the website [rstudio.github.io/DT/](rstudio.github.io/DT/).  
+
+***
+
+```{r echo=FALSE, comment=''}
+DT::datatable(as.data.frame(prices)[ , 1:4])
+```
+
